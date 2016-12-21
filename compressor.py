@@ -9,11 +9,7 @@ class Compressor(object):
 
     def __init__(self, API_KEY):
         tinify.key = API_KEY
-        try:
-            tinify.validate()
-        except Exception as e:
-            print("Wrong account details")
-            sys.exit(1)
+        tinify.validate()
 
     def compress(self, image_path, replace=True, save_path=None):
         try:
