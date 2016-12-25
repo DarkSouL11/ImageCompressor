@@ -23,5 +23,16 @@ class Compressor(object):
         except Exception as e:
             print(e)
 
+    def url_compress(self, image_url, save_path):
+        try:
+            source = tinify.from_url(image_url)
+            IMAGE = image_url.rsplit('/',1)[1]
+            path = save_path + "/" + IMAGE
+            source.to_file(path)
+        except tinify.errors.AccountError as err:
+            print(err)
+        except Exception as e:
+            print(e)
+
     def quota_left(self):
         return 500 - tinify.compression_count

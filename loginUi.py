@@ -1,7 +1,7 @@
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
-import tinify, time
+import tinify
 
 
 class authInterface(Gtk.Window):
@@ -36,9 +36,10 @@ class authInterface(Gtk.Window):
     def verify(self, widget):
         apikey = self.api_input.get_text()
         tinify.key = apikey
+        widget.set_sensitive(False)
         self.alert.set_text("Checking...")
         while Gtk.events_pending():
-                 Gtk.main_iteration_do(False)
+            Gtk.main_iteration_do(False)
         try:
             tinify.validate()
             keyfile = open('.apikey', 'w')
@@ -48,3 +49,4 @@ class authInterface(Gtk.Window):
         except Exception as e:
             self.api_input.set_text("")
             self.alert.set_text("Invalid API key, re-enter the key.")
+        widget.set_sensitive(True)
