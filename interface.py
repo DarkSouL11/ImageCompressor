@@ -1,7 +1,8 @@
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
-from initialize import check, folder_convert, file_convert
+from utils import check, folder_convert, file_convert, url_convert
+import os
 
 
 class interface(Gtk.Window):
@@ -13,6 +14,7 @@ class interface(Gtk.Window):
 
         # variables used
 
+        self.is_url = False
         self.is_folder = False
         self.m_replace = True
         self.OUTPUT_LOCATION = ""
@@ -21,7 +23,7 @@ class interface(Gtk.Window):
 
 
         Gtk.Window.__init__(self, title="Image Convertor")
-        self.set_default_size(700, 350)
+        self.set_default_size(500, 350)
         self.set_border_width(20)
 
         # Box that holds items Vertically
@@ -48,7 +50,14 @@ class interface(Gtk.Window):
 
         self.check2 = Gtk.RadioButton.new_from_widget(self.check1)
         self.check2.set_label("Convert all images in a folder")
+        self.check2.connect("toggled", self.on_button_toggled, "2")
         self.hbox2.pack_start(self.check2, True, True, 0)
+
+        self.check3 = Gtk.RadioButton.new_from_widget(self.check1)
+        self.check3.set_label("Convert image from url")
+        self.check3.connect("toggled", self.on_button_toggled, "3")
+        self.hbox2.pack_start(self.check3, True, True, 0)
+
         self.frame.add(self.hbox2)
         self.vbox.pack_start(self.frame, True, True, 0)
 
@@ -60,7 +69,7 @@ class interface(Gtk.Window):
         row = Gtk.ListBoxRow()
         hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=20)
         row.add(hbox)
-        self.input_label = Gtk.Label("Input file/folder", xalign=0)
+        self.input_label = Gtk.Label("Input file/folder/url", xalign=0)
         hbox.pack_start(self.input_label, True, True, 0)
         self.input_lbox.add(row)
 
@@ -133,9 +142,21 @@ class interface(Gtk.Window):
 
     def on_button_toggled(self, button, name):
         if button.get_active():
-            self.is_folder = False
-        else:
-            self.is_folder = True
+            if name == "3":
+                self.is_url = True
+                self.replace_switch.set_sensitive(False)
+                self.output_lbox.set_sensitive(True)
+                self.input_button.set_sensitive(False)
+            else:
+                self.is_url = False
+                self.replace_switch.set_sensitive(True)
+                self.replace_switch.set_active(True)
+                self.output_lbox.set_sensitive(False)
+                self.input_button.set_sensitive(True)
+                if name == "1":
+                    self.is_folder = False
+                else:
+                    self.is_folder = True
         self.input_file.set_text("")
         self.INPUT_LOCATION = ""
 
@@ -191,8 +212,16 @@ class interface(Gtk.Window):
 
     def final_compress(self, widget):
         widget.set_sensitive(False)
-        print(self.INPUT_LOCATION, self.OUTPUT_LOCATION, self.m_replace, self.is_folder)
-        if check(self.INPUT_LOCATION, self.OUTPUT_LOCATION, self.m_replace, self.is_folder):
+        while Gtk.events_pending():
+            Gtk.main_iteration_do(False)
+        self.INPUT_LOCATION = self.input_file.get_text()
+        self.OUTPUT_LOCATION = self.output_file.get_text()
+        if self.is_url:
+            if os.path.isdir(self.OUTPUT_LOCATION):
+                url_convert(self.compressor, self.INPUT_LOCATION, self.OUTPUT_LOCATION)
+            else:
+                print("Invalid save path")
+        elif check(self.INPUT_LOCATION, self.OUTPUT_LOCATION, self.m_replace, self.is_folder):
             if self.is_folder:
                 folder_convert(self.compressor, self.INPUT_LOCATION,
                         replace=self.m_replace, output_path=self.OUTPUT_LOCATION)
