@@ -1,8 +1,7 @@
-import gi
+import gi, os
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 from utils import check, folder_convert, file_convert, url_convert
-import os
 
 
 class interface(Gtk.Window):
@@ -20,9 +19,7 @@ class interface(Gtk.Window):
         self.OUTPUT_LOCATION = ""
         self.INPUT_LOCATION = ""
 
-
-
-        Gtk.Window.__init__(self, title="Image Convertor")
+        Gtk.Window.__init__(self, title="ImageCompressor")
         self.set_default_size(500, 350)
         self.set_border_width(20)
 
@@ -69,7 +66,7 @@ class interface(Gtk.Window):
         row = Gtk.ListBoxRow()
         hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=20)
         row.add(hbox)
-        self.input_label = Gtk.Label("Input file/folder/url", xalign=0)
+        self.input_label = Gtk.Label("Input file", xalign=0)
         hbox.pack_start(self.input_label, True, True, 0)
         self.input_lbox.add(row)
 
@@ -144,6 +141,7 @@ class interface(Gtk.Window):
         if button.get_active():
             if name == "3":
                 self.is_url = True
+                self.input_label.set_label("Input URL")
                 self.replace_switch.set_sensitive(False)
                 self.output_lbox.set_sensitive(True)
                 self.input_button.set_sensitive(False)
@@ -155,8 +153,10 @@ class interface(Gtk.Window):
                 self.input_button.set_sensitive(True)
                 if name == "1":
                     self.is_folder = False
+                    self.input_label.set_label("Input file")
                 else:
                     self.is_folder = True
+                    self.input_label.set_label("Input folder")
         self.input_file.set_text("")
         self.INPUT_LOCATION = ""
 
