@@ -2,6 +2,10 @@ import gi, os
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 from utils import check, folder_convert, file_convert, url_convert
+import time
+from time import sleep
+import sys
+
 
 
 class interface(Gtk.Window):
@@ -210,25 +214,39 @@ class interface(Gtk.Window):
 
         self.dialog.destroy()
 
-    def final_compress(self, widget):
+     def final_compress(self, widget):
         widget.set_sensitive(False)
         while Gtk.events_pending():
             Gtk.main_iteration_do(False)
         self.INPUT_LOCATION = self.input_file.get_text()
         self.OUTPUT_LOCATION = self.output_file.get_text()
+        def print_slowly(text):
+            for c in text:
+                print(c, end='')
+                sys.stdout.flush()
+                sleep(1.5)
         if self.is_url:
             if os.path.isdir(self.OUTPUT_LOCATION):
+                print("Compressing ",self.INPUT_LOCATION,"  In Progress..",end="")
+                print_slowly('.....')
+                print(".",end="\r")
                 url_convert(self.compressor, self.INPUT_LOCATION, self.OUTPUT_LOCATION)
             else:
                 print("Invalid save path")
         elif check(self.INPUT_LOCATION, self.OUTPUT_LOCATION, self.m_replace, self.is_folder):
             if self.is_folder:
+                print("Compressing ",self.INPUT_LOCATION,"  In Progress..",end="")
+                print_slowly('.....')
+                print("..",end="\r")
                 folder_convert(self.compressor, self.INPUT_LOCATION,
                         replace=self.m_replace, output_path=self.OUTPUT_LOCATION)
             else:
+                print("Compressing ",self.INPUT_LOCATION,"  In Progress..",end="")
+                print_slowly('.....')
+                print("..",end="\r")
                 file_convert(self.compressor, self.INPUT_LOCATION,
                         replace=self.m_replace, output_path=self.OUTPUT_LOCATION)
         else:
             print("Invalid options")
-        print("Done!")
+        print ("Done!                                                                         ")
         widget.set_sensitive(True)

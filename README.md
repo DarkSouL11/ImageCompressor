@@ -2,7 +2,7 @@
 
 Optimize your images with a perfect balance in quality and file size.
 
-ImageCompressor uses TinyPng's developer API to compress images without losing any quality.Works with windows, mac and gtk based desktops on Linux.
+ImageCompressor uses TinyPng's developer API to compress images without losing any quality.Works with mac and gtk based desktops on Linux.
 
 
 How the GUI looks
@@ -42,13 +42,6 @@ To install tinify package run this command.
 ```
 pip3 install tinify
 ```
-For windows follow the steps in this link:
-
-http://arunrocks.com/guide-to-install-python-or-pip-on-windows/
-
-
->Note: there is no sudo for windows as well as when you have root privelages. 
-Just run commands without sudo
 
 >Note: some setups use python instead of python3 and pip3 instead of pip
 
@@ -57,11 +50,12 @@ How to use
 ==========
 
 Register at: https://tinypng.com/developers 
-Copy the api key and paste it in apikey.txt
-Then open terminal in that directory and run the comand
+Copy the api key that you receive on registering. 
+Then open terminal in that directory and run the command
 ```
 python3 main.py
 ```
+Now paste the api key in the login terminal that appears.
 
 Contact Us
 ==========
